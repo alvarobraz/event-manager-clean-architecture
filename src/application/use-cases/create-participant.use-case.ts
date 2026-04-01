@@ -42,6 +42,7 @@ export class CreateParticipantUseCase {
         name,
         email: emailVO,
         phone,
+        createdAt: new Date(),
       })
 
       await this.participantsRepository.create(participant)
