@@ -1,0 +1,12 @@
+# Nestjs specific
+/dist
+/node_modules
+/build
+/tmp
+
+# Env
+.env
+.env.test
+
+# Prisma
+/generated/prisma
