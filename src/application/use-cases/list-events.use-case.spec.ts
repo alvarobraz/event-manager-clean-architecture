@@ -12,37 +12,42 @@ describe('List Events Use Case', () => {
     sut = new ListEventsUseCase(eventsRepo)
   })
 
-  it('should be able to list all events', async () => {
-    await eventsRepo.create(
-      Event.create({
-        name: 'Event 01',
-        description: 'Description 01',
-        date: new Date(Date.now() + 1000 * 60 * 60 * 24),
-      }),
-    )
+  it('should be able to list paginated events', async () => {
+    for (let i = 1; i <= 3; i++) {
+      await eventsRepo.create(
+        Event.create({
+          name: `Event ${i}`,
+          description: `Description ${i}`,
+          date: new Date(Date.now() + 1000 * 60 * 60 * 24 * i),
+        }),
+      )
+    }
 
-    await eventsRepo.create(
-      Event.create({
-        name: 'Event 02',
-        description: 'Description 02',
-        date: new Date(Date.now() + 1000 * 60 * 60 * 48),
-      }),
-    )
-
-    const result = await sut.execute()
+    const result = await sut.execute({
+      params: { page: 1, pageSize: 2 },
+    })
 
     expect(result.isRight()).toBe(true)
     if (result.isRight()) {
       expect(result.value.events).toHaveLength(2)
-      expect(result.value.events).toEqual([
-        expect.objectContaining({ name: 'Event 01' }),
-        expect.objectContaining({ name: 'Event 02' }),
-      ])
+      expect(result.value.events[0].name).toBe('Event 1')
+      expect(result.value.events[1].name).toBe('Event 2')
+    }
+
+    const secondPageResult = await sut.execute({
+      params: { page: 2, pageSize: 2 },
+    })
+
+    if (secondPageResult.isRight()) {
+      expect(secondPageResult.value.events).toHaveLength(1)
+      expect(secondPageResult.value.events[0].name).toBe('Event 3')
     }
   })
 
   it('should return an empty list when no events exist', async () => {
-    const result = await sut.execute()
+    const result = await sut.execute({
+      params: { page: 1, pageSize: 10 },
+    })
 
     expect(result.isRight()).toBe(true)
     if (result.isRight()) {

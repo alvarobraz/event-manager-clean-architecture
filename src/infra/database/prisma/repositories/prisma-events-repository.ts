@@ -2,6 +2,7 @@ import { EventsRepository } from '@/domain/repositories/events-repository'
 import { Event } from '@/domain/entities/event'
 import { prisma } from '../lib/prisma'
 import { PrismaEventMapper } from '../mappers/prisma-event-mapper'
+import { PaginationParams } from '@/core/repositories/pagination-params'
 
 export class PrismaEventsRepository implements EventsRepository {
   async findById(id: string): Promise<Event | null> {
@@ -29,10 +30,15 @@ export class PrismaEventsRepository implements EventsRepository {
     })
   }
 
-  async listAll(): Promise<Event[]> {
+  async listAll({ page, pageSize }: PaginationParams): Promise<Event[]> {
     const events = await prisma.event.findMany({
-      orderBy: { date: 'asc' },
+      take: pageSize,
+      skip: (page - 1) * pageSize,
+      orderBy: {
+        createdAt: 'desc',
+      },
     })
+
     return events.map(PrismaEventMapper.toDomain)
   }
 }

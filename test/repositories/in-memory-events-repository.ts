@@ -1,5 +1,6 @@
 import { EventsRepository } from '@/domain/repositories/events-repository'
 import { Event } from '@/domain/entities/event'
+import { PaginationParams } from '@/core/repositories/pagination-params'
 
 export class InMemoryEventsRepository implements EventsRepository {
   public items: Event[] = []
@@ -23,7 +24,10 @@ export class InMemoryEventsRepository implements EventsRepository {
     this.items[index] = event
   }
 
-  async listAll() {
-    return this.items
+  async listAll({ page, pageSize }: PaginationParams): Promise<Event[]> {
+    const startIndex = (page - 1) * pageSize
+    const endIndex = page * pageSize
+
+    return this.items.slice(startIndex, endIndex)
   }
 }

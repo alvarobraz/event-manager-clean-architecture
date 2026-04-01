@@ -1,3 +1,4 @@
+import { PaginationParams } from '@/core/repositories/pagination-params'
 import { Event } from '../entities/event'
 
 export interface EventsRepository {
@@ -5,5 +6,5 @@ export interface EventsRepository {
   findByName(name: string): Promise<Event | null>
   create(event: Event): Promise<void>
   save(event: Event): Promise<void>
-  listAll(): Promise<Event[]>
+  listAll(params: PaginationParams): Promise<Event[]>
 }
