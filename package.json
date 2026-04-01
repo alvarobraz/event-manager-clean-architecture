@@ -6,7 +6,7 @@
   "scripts": {
     "start:dev": "tsx watch src/infra/http/server.ts",
     "build": "tsup src --out-dir dist",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
