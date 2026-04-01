@@ -3,6 +3,9 @@ import { Event } from '@/domain/entities/event'
 import { EventsRepository } from '@/domain/repositories/events-repository'
 import { EventAlreadyExistsError } from '../errors/event-already-exists-error'
 import { PastDateError } from '../errors/past-date-error'
+import { AttachmentsRepository } from '@/domain/repositories/attachments-repository'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
 interface CreateEventUseCaseRequest {
   name: string
@@ -17,7 +20,10 @@ type CreateEventUseCaseResponse = Either<
 >
 
 export class CreateEventUseCase {
-  constructor(private eventsRepository: EventsRepository) {}
+  constructor(
+    private eventsRepository: EventsRepository,
+    private attachmentsRepository: AttachmentsRepository,
+  ) {}
 
   async execute({
     name,
@@ -35,12 +41,20 @@ export class CreateEventUseCase {
       return left(new PastDateError(date))
     }
 
+    if (bannerImageId) {
+      const attachment =
+        await this.attachmentsRepository.findById(bannerImageId)
+      if (!attachment) {
+        return left(new ResourceNotFoundError())
+      }
+    }
+
     try {
       const event = Event.create({
         name,
         description,
         date,
-        bannerImageId,
+        bannerImageId: bannerImageId ? new UniqueEntityID(bannerImageId) : null,
       })
 
       await this.eventsRepository.create(event)

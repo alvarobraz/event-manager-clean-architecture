@@ -5,7 +5,7 @@ import { Optional } from '@/core/types/optional'
 export interface EventProps {
   name: string
   description: string
-  bannerImageId?: string | null
+  bannerImageId?: UniqueEntityID | null
   date: Date
   createdAt: Date
 }
@@ -34,8 +34,8 @@ export class Event extends Entity<EventProps> {
     return this.props.bannerImageId
   }
 
-  set bannerImageId(bannerImageId: string | undefined | null) {
-    this.props.bannerImageId = bannerImageId
+  set bannerImageId(id: UniqueEntityID | undefined | null) {
+    this.props.bannerImageId = id ?? null
   }
 
   get date() {
