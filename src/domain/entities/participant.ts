@@ -6,6 +6,7 @@ export interface ParticipantProps {
   name: string
   email: Email
   phone: string
+  createdAt: Date
 }
 
 export class Participant extends Entity<ParticipantProps> {
@@ -17,6 +18,10 @@ export class Participant extends Entity<ParticipantProps> {
   }
   get phone() {
     return this.props.phone
+  }
+
+  get createdAt() {
+    return this.props.createdAt
   }
 
   private constructor(props: ParticipantProps, id?: UniqueEntityID) {
@@ -37,6 +42,12 @@ export class Participant extends Entity<ParticipantProps> {
       throw new Error('Invalid phone number')
     }
 
-    return new Participant(props, id)
+    return new Participant(
+      {
+        ...props,
+        createdAt: props.createdAt ?? new Date(),
+      },
+      id,
+    )
   }
 }
