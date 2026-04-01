@@ -1,10 +1,7 @@
-import http from 'node:http'
+import { app } from './app'
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify({ message: 'API running 🚀' }))
-})
+const PORT = process.env.PORT || 3333
 
-server.listen(3333, () => {
-  console.log('🚀 HTTP server running on http://localhost:3333')
+app.listen(PORT, () => {
+  console.log(`🚀 HTTP Server running on http://localhost:${PORT}`)
 })
