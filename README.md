@@ -42,13 +42,13 @@
 
 ## :dart: Sobre
 
-O **Event Manager** é um ecossistema backend desenhado para alta escalabilidade e manutenibilidade. O projeto permite a criação de eventos com suporte a anexos (banners via S3), gestão de participantes e um sistema de inscrições (Registrations) com suporte total a **paginação** de alta performance.
+O **Event Manager** é um projeto de gerenciamento de eventos desenvolvido como teste técnico. A aplicação permite a criação de eventos com suporte a banners, gestão de participantes e controle de inscrições com paginação.
 
-A arquitetura separa claramente as regras de negócio (Use Cases) dos detalhes de implementação (Express, Prisma, Cloud Flare EC2), garantindo que o núcleo da aplicação seja independente de ferramentas externas e totalmente testável.
+A estrutura segue os princípios de **Clean Architecture**, separando as regras de negócio (Use Cases) dos detalhes de infraestrutura (Express, Prisma, Cloudflare/EC2). O objetivo principal foi garantir um código testável, desacoplado de ferramentas externas e de fácil manutenção.
 
 ## :rocket: Tecnologias
 
-O projeto utiliza as tecnologias mais modernas do ecossistema backend:
+O projeto utiliza as tecnologias do ecossistema backend:
 
 ### Core & Application
 
@@ -74,7 +74,7 @@ O projeto utiliza as tecnologias mais modernas do ecossistema backend:
 
 ## :test_tube: Testes
 
-O projeto prioriza a testabilidade com diferentes níveis de isolamento:
+O projeto conta com testes automatizados para garantir a integridade das regras de negócio:
 
 ```bash
 # Testes Unitários (Foco nos Use Cases e Domínio)
@@ -92,6 +92,7 @@ $ npm run test:e2e:watch
 ```
 
 :white_check_mark: Requerimentos
+
 Node.js 20.19.3+
 
 PostgreSQL
