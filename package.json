@@ -2,6 +2,9 @@
   "name": "event-manager-clean-architecture",
   "version": "1.0.0",
   "description": "",
+  "engines": {
+    "node": ">=20.19.3"
+  },
   "main": "index.js",
   "scripts": {
     "start:dev": "tsx watch src/infra/http/server.ts",
@@ -10,6 +13,7 @@
     "postinstall": "prisma generate",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:unit": "vitest run --dir src/application/use-cases",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "test:e2e:watch": "vitest --config ./vitest.config.e2e.ts",
     "lint": "eslint src --ext .ts",
