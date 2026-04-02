@@ -6,6 +6,8 @@
   "scripts": {
     "start:dev": "tsx watch src/infra/http/server.ts",
     "build": "tsup src --out-dir dist",
+    "start": "node dist/infra/http/server.js",
+    "postinstall": "prisma generate",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
