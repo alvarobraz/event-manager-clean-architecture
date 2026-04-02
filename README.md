@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/alvarobraz/event-manager-clean-architecture" target="blank">
-    <img src="https://raw.githubusercontent.com/prisma/prisma/main/packages/sdk/src/images/prisma_logo.png" width="120" alt="Prisma Logo" />
+    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" width="120" alt="Node.js Logo" />
   </a>
 </p>
 
