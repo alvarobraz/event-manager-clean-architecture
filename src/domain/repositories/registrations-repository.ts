@@ -1,3 +1,4 @@
+import { PaginationParams } from '@/core/repositories/pagination-params'
 import { Registration } from '../entities/registration'
 
 export interface RegistrationsRepository {
@@ -5,6 +6,9 @@ export interface RegistrationsRepository {
     eventId: string,
     participantId: string,
   ): Promise<Registration | null>
-  findManyByEventId(eventId: string): Promise<Registration[]>
+  findManyByEventId(
+    eventId: string,
+    params: PaginationParams,
+  ): Promise<Registration[]>
   create(registration: Registration): Promise<void>
 }

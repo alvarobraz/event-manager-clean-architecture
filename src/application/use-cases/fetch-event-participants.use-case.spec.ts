@@ -64,6 +64,7 @@ describe('Fetch Event Participants Use Case', () => {
 
     const result = await sut.execute({
       eventId: event.id.toString(),
+      params: { page: 1, pageSize: 20 },
     })
 
     expect(result.isRight()).toBe(true)
@@ -79,9 +80,59 @@ describe('Fetch Event Participants Use Case', () => {
     }
   })
 
+  it('should be able to fetch paginated event participants', async () => {
+    const event = Event.create({
+      name: 'Paginated Event',
+      description: 'Testing pagination',
+      date: new Date(),
+    })
+    await eventsRepo.create(event)
+
+    for (let i = 1; i <= 3; i++) {
+      const participant = Participant.create({
+        name: `Participant ${i}`,
+        email: Email.create(`p${i}@example.com`),
+        phone: `4199999999${i}`,
+        createdAt: new Date(),
+      })
+      await participantsRepo.create(participant)
+
+      await registrationsRepo.create(
+        Registration.create({
+          eventId: event.id,
+          participantId: participant.id,
+        }),
+      )
+    }
+
+    // Página 1 com 2 itens
+    const result = await sut.execute({
+      eventId: event.id.toString(),
+      params: { page: 1, pageSize: 2 },
+    })
+
+    expect(result.isRight()).toBe(true)
+    if (result.isRight()) {
+      expect(result.value.participants).toHaveLength(2)
+      expect(result.value.participants[0].name).toBe('Participant 1')
+      expect(result.value.participants[1].name).toBe('Participant 2')
+    }
+
+    const resultSecondPage = await sut.execute({
+      eventId: event.id.toString(),
+      params: { page: 2, pageSize: 2 },
+    })
+
+    if (resultSecondPage.isRight()) {
+      expect(resultSecondPage.value.participants).toHaveLength(1)
+      expect(resultSecondPage.value.participants[0].name).toBe('Participant 3')
+    }
+  })
+
   it('should not be able to fetch participants from a non-existent event', async () => {
     const result = await sut.execute({
       eventId: 'non-existent-id',
+      params: { page: 1, pageSize: 20 },
     })
 
     expect(result.isLeft()).toBe(true)
@@ -98,6 +149,7 @@ describe('Fetch Event Participants Use Case', () => {
 
     const result = await sut.execute({
       eventId: event.id.toString(),
+      params: { page: 1, pageSize: 10 },
     })
 
     expect(result.isRight()).toBe(true)

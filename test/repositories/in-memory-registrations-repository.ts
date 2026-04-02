@@ -1,5 +1,6 @@
 import { RegistrationsRepository } from '@/domain/repositories/registrations-repository'
 import { Registration } from '@/domain/entities/registration'
+import { PaginationParams } from '@/core/repositories/pagination-params'
 
 export class InMemoryRegistrationsRepository implements RegistrationsRepository {
   public items: Registration[] = []
@@ -15,8 +16,15 @@ export class InMemoryRegistrationsRepository implements RegistrationsRepository 
     return registration ?? null
   }
 
-  async findManyByEventId(eventId: string) {
-    return this.items.filter((item) => item.eventId.toString() === eventId)
+  async findManyByEventId(
+    eventId: string,
+    { page, pageSize }: PaginationParams,
+  ) {
+    const registrations = this.items
+      .filter((item) => item.eventId.toString() === eventId)
+      .slice((page - 1) * pageSize, page * pageSize)
+
+    return registrations
   }
 
   async create(registration: Registration) {

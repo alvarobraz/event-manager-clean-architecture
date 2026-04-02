@@ -9,6 +9,11 @@ const fetchEventParticipantsParamsSchema = z.object({
   eventId: z.string().uuid(),
 })
 
+const fetchEventParticipantsQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  pageSize: z.coerce.number().min(1).max(100).default(20),
+})
+
 export class FetchEventParticipantsController {
   constructor(
     private fetchEventParticipantsUseCase: FetchEventParticipantsUseCase,
@@ -16,8 +21,17 @@ export class FetchEventParticipantsController {
 
   async handle(req: Request, res: Response) {
     const { eventId } = fetchEventParticipantsParamsSchema.parse(req.params)
+    const { page, pageSize } = fetchEventParticipantsQuerySchema.parse(
+      req.query,
+    )
 
-    const result = await this.fetchEventParticipantsUseCase.execute({ eventId })
+    const result = await this.fetchEventParticipantsUseCase.execute({
+      eventId,
+      params: {
+        page,
+        pageSize,
+      },
+    })
 
     if (result.isLeft()) {
       const error = result.value

@@ -5,9 +5,11 @@ import { EventsRepository } from '@/domain/repositories/events-repository'
 import { RegistrationsRepository } from '@/domain/repositories/registrations-repository'
 import { ParticipantsRepository } from '@/domain/repositories/participants-repository'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error'
+import { PaginationParams } from '@/core/repositories/pagination-params'
 
 interface FetchEventParticipantsRequest {
   eventId: string
+  params: PaginationParams
 }
 
 type FetchEventParticipantsResponse = Either<
@@ -27,15 +29,15 @@ export class FetchEventParticipantsUseCase {
 
   async execute({
     eventId,
+    params,
   }: FetchEventParticipantsRequest): Promise<FetchEventParticipantsResponse> {
     const event = await this.eventsRepository.findById(eventId)
+    if (!event) return left(new ResourceNotFoundError())
 
-    if (!event) {
-      return left(new ResourceNotFoundError())
-    }
-
-    const registrations =
-      await this.registrationsRepository.findManyByEventId(eventId)
+    const registrations = await this.registrationsRepository.findManyByEventId(
+      eventId,
+      params,
+    )
 
     const participants = await Promise.all(
       registrations.map(async (reg) => {

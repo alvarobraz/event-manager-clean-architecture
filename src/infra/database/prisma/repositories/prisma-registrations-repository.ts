@@ -2,6 +2,7 @@ import { RegistrationsRepository } from '@/domain/repositories/registrations-rep
 import { Registration } from '@/domain/entities/registration'
 import { prisma } from '../lib/prisma'
 import { PrismaRegistrationMapper } from '../mappers/prisma-registration-mapper'
+import { PaginationParams } from '@/core/repositories/pagination-params'
 
 export class PrismaRegistrationsRepository implements RegistrationsRepository {
   async findByEventAndParticipant(eventId: string, participantId: string) {
@@ -17,10 +18,21 @@ export class PrismaRegistrationsRepository implements RegistrationsRepository {
     return PrismaRegistrationMapper.toDomain(registration)
   }
 
-  async findManyByEventId(eventId: string): Promise<Registration[]> {
+  async findManyByEventId(
+    eventId: string,
+    { page, pageSize }: PaginationParams,
+  ): Promise<Registration[]> {
     const registrations = await prisma.registration.findMany({
-      where: { eventId },
+      where: {
+        eventId,
+      },
+      take: pageSize,
+      skip: (page - 1) * pageSize,
+      orderBy: {
+        registeredAt: 'asc',
+      },
     })
+
     return registrations.map(PrismaRegistrationMapper.toDomain)
   }
 
