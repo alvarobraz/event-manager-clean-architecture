@@ -38,6 +38,7 @@ describe('Register Participant In Event Use Case', () => {
       name: 'Álvaro Braz',
       email: Email.create('alvaro@cwbcoding.com.br'),
       phone: '41999999999',
+      createdAt: new Date(),
     })
     await participantsRepo.create(participant)
 
@@ -75,6 +76,7 @@ describe('Register Participant In Event Use Case', () => {
       name: 'Álvaro',
       email: Email.create('alvaro@example.com'),
       phone: '41988888888',
+      createdAt: new Date(),
     })
     await participantsRepo.create(participant)
 

@@ -4,16 +4,16 @@ import { prisma } from '../lib/prisma'
 import { PrismaRegistrationMapper } from '../mappers/prisma-registration-mapper'
 
 export class PrismaRegistrationsRepository implements RegistrationsRepository {
-  async findByEventAndParticipant(
-    eventId: string,
-    participantId: string,
-  ): Promise<Registration | null> {
-    const registration = await prisma.registration.findUnique({
+  async findByEventAndParticipant(eventId: string, participantId: string) {
+    const registration = await prisma.registration.findFirst({
       where: {
-        eventId_participantId: { eventId, participantId },
+        eventId,
+        participantId,
       },
     })
+
     if (!registration) return null
+
     return PrismaRegistrationMapper.toDomain(registration)
   }
 
