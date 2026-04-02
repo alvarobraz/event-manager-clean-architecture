@@ -7,7 +7,7 @@
 <h1 align="center">Event Manager - Clean Architecture 🚀</h1>
 
 <p align="center">
-  Aplicação backend para gerenciamento de eventos e inscrições, desenvolvida com Node.js, TypeScript e PostgreSQL seguindo rigorosamente os princípios de Clean Architecture.
+  Aplicação backend para gerenciamento de eventos e inscrições, desenvolvida com Node.js, TypeScript e PostgreSQL seguindo os princípios de Clean Architecture.
 </p>
 
 <p align="center">
@@ -98,35 +98,37 @@ PostgreSQL
 
 :checkered_flag: Começando
 
-# Clone o projeto
+```bash
+## Clone o projeto
 
 $ git clone [https://github.com/alvarobraz/event-manager-clean-architecture](https://github.com/alvarobraz/event-manager-clean-architecture)
 
-# Acesse a pasta
+## Acesse a pasta
 
 $ cd event-manager-clean-architecture
 
-# Instale as dependências
+## Instale as dependências
 
 $ npm install
 
-# Configure seu .env (DATABASE_URL, CLOUDFLARE_KEYS)
+## Configure seu .env (DATABASE_URL, CLOUDFLARE_KEYS)
 
 $ cp .env.example .env
 
-# Sincronize o banco de dados e rode as migrations
+## Sincronize o banco de dados e rode as migrations
 
 $ npx prisma migrate dev
 
-# Popule o banco com o seed global (15 eventos e 50 participantes)
+## Popule o banco com o seed global (15 eventos e 50 participantes)
 
 $ npx prisma db seed
 
-# Inicie o servidor de desenvolvimento
+## Inicie o servidor de desenvolvimento
 
 $ npm run start:dev
 
-# O servidor estará disponível em http://localhost:3333.
+## O servidor estará disponível em http://localhost:3333.
+```
 
 ---
 
