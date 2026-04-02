@@ -8,7 +8,6 @@
     "build": "tsup src --out-dir dist",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:unit": "vitest run --dir src/application/use-cases",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "test:e2e:watch": "vitest --config ./vitest.config.e2e.ts",
     "lint": "eslint src --ext .ts",
