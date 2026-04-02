@@ -16,6 +16,7 @@ export class Participant extends Entity<ParticipantProps> {
   get email() {
     return this.props.email
   }
+
   get phone() {
     return this.props.phone
   }

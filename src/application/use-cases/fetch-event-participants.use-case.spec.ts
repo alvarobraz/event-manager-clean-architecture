@@ -38,11 +38,13 @@ describe('Fetch Event Participants Use Case', () => {
       name: 'Álvaro Braz',
       email: Email.create('alvaro@example.com'),
       phone: '41999999991',
+      createdAt: new Date(),
     })
     const participant2 = Participant.create({
       name: 'John Doe',
       email: Email.create('john@example.com'),
       phone: '41999999992',
+      createdAt: new Date(),
     })
     await participantsRepo.create(participant1)
     await participantsRepo.create(participant2)

@@ -11,6 +11,8 @@ import { CreateParticipantController } from './controllers/create-participant.co
 import { PrismaRegistrationsRepository } from '../database/prisma/repositories/prisma-registrations-repository'
 import { RegisterParticipantInEventUseCase } from '@/application/use-cases/register-participant-in-event.use-case'
 import { RegisterParticipantInEventController } from './controllers/register-participant-in-event.controller'
+import { FetchEventParticipantsUseCase } from '@/application/use-cases/fetch-event-participants.use-case'
+import { FetchEventParticipantsController } from './controllers/fetch-event-participants.controller'
 
 const routes = Router()
 
@@ -40,6 +42,15 @@ const registerParticipantInEventUseCase = new RegisterParticipantInEventUseCase(
 const registerParticipantInEventController =
   new RegisterParticipantInEventController(registerParticipantInEventUseCase)
 
+const fetchEventParticipantsUseCase = new FetchEventParticipantsUseCase(
+  eventsRepository,
+  registrationsRepository,
+  participantsRepository,
+)
+const fetchEventParticipantsController = new FetchEventParticipantsController(
+  fetchEventParticipantsUseCase,
+)
+
 routes.post('/events', (req, res) => createEventController.handle(req, res))
 routes.post('/attachments', upload.single('file'), (req, res) =>
   uploadAttachmentController.handle(req, res),
@@ -51,6 +62,10 @@ routes.post('/participants', (req, res) =>
 
 routes.post('/events/:eventId/participants', (req, res) =>
   registerParticipantInEventController.handle(req, res),
+)
+
+routes.get('/events/:eventId/participants', (req, res) =>
+  fetchEventParticipantsController.handle(req, res),
 )
 
 export { routes }
