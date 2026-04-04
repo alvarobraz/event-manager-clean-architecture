@@ -13,6 +13,7 @@ import { RegisterParticipantInEventUseCase } from '@/application/use-cases/regis
 import { RegisterParticipantInEventController } from './controllers/register-participant-in-event.controller'
 import { FetchEventParticipantsUseCase } from '@/application/use-cases/fetch-event-participants.use-case'
 import { FetchEventParticipantsController } from './controllers/fetch-event-participants.controller'
+import { PrismaAttachmentsRepository } from '../database/prisma/repositories/prisma-attachments-repository'
 
 const routes = Router()
 
@@ -22,7 +23,11 @@ const upload = multer({ storage })
 const createEventController = new CreateEventController()
 const uploadAttachmentController = new UploadAttachmentController()
 const eventsRepository = new PrismaEventsRepository()
-const listEventsUseCase = new ListEventsUseCase(eventsRepository)
+const attachmentsRepository = new PrismaAttachmentsRepository()
+const listEventsUseCase = new ListEventsUseCase(
+  eventsRepository,
+  attachmentsRepository,
+)
 const listEventsController = new ListEventsController(listEventsUseCase)
 
 const participantsRepository = new PrismaParticipantsRepository()
