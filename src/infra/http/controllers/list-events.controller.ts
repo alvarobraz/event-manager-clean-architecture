@@ -28,7 +28,9 @@ export class ListEventsController {
     const { events } = result.value
 
     return res.status(200).json({
-      events: events.map(EventPresenter.toHTTP),
+      events: events.map((item) =>
+        EventPresenter.toHTTP(item.event, item.attachment),
+      ),
     })
   }
 }
