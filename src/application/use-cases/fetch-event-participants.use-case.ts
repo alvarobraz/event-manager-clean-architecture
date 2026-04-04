@@ -23,6 +23,7 @@ type FetchEventParticipantsResponse = Either<
   ResourceNotFoundError,
   {
     event: Event
+    eventAttachment: Attachment | null
     participants: ParticipantWithAttachment[]
   }
 >
@@ -44,6 +45,12 @@ export class FetchEventParticipantsUseCase {
     if (!event) {
       return left(new ResourceNotFoundError())
     }
+
+    const eventAttachment = event.bannerImageId
+      ? await this.attachmentsRepository.findById(
+          event.bannerImageId.toString(),
+        )
+      : null
 
     const registrations = await this.registrationsRepository.findManyByEventId(
       eventId,
@@ -73,6 +80,7 @@ export class FetchEventParticipantsUseCase {
 
     return right({
       event,
+      eventAttachment,
       participants: participants.filter(
         (item): item is ParticipantWithAttachment => item !== null,
       ),

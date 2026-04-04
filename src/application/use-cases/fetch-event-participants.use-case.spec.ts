@@ -27,7 +27,7 @@ describe('Fetch Event Participants Use Case', () => {
       eventsRepo,
       registrationsRepo,
       participantsRepo,
-      attachmentsRepo, // 👈 NOVO
+      attachmentsRepo,
     )
   })
 

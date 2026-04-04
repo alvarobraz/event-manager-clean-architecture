@@ -43,10 +43,10 @@ export class FetchEventParticipantsController {
       return res.status(400).json({ message: error })
     }
 
-    const { event, participants } = result.value
+    const { event, eventAttachment, participants } = result.value
 
     return res.status(200).json({
-      event: EventPresenter.toHTTP(event),
+      event: EventPresenter.toHTTP(event, eventAttachment),
       participants: participants.map((item) =>
         ParticipantPresenter.toHTTP(item),
       ),
