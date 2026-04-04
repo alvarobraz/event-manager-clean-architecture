@@ -1,9 +1,11 @@
 import { Either, left, right } from '@/core/either'
 import { Participant } from '@/domain/entities/participant'
 import { Event } from '@/domain/entities/event'
+import { Attachment } from '@/domain/entities/attachment'
 import { EventsRepository } from '@/domain/repositories/events-repository'
 import { RegistrationsRepository } from '@/domain/repositories/registrations-repository'
 import { ParticipantsRepository } from '@/domain/repositories/participants-repository'
+import { AttachmentsRepository } from '@/domain/repositories/attachments-repository'
 import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 import { PaginationParams } from '@/core/repositories/pagination-params'
 
@@ -12,11 +14,16 @@ interface FetchEventParticipantsRequest {
   params: PaginationParams
 }
 
+type ParticipantWithAttachment = {
+  participant: Participant
+  attachment: Attachment | null
+}
+
 type FetchEventParticipantsResponse = Either<
   ResourceNotFoundError,
   {
     event: Event
-    participants: Participant[]
+    participants: ParticipantWithAttachment[]
   }
 >
 
@@ -25,6 +32,7 @@ export class FetchEventParticipantsUseCase {
     private eventsRepository: EventsRepository,
     private registrationsRepository: RegistrationsRepository,
     private participantsRepository: ParticipantsRepository,
+    private attachmentsRepository: AttachmentsRepository,
   ) {}
 
   async execute({
@@ -32,7 +40,10 @@ export class FetchEventParticipantsUseCase {
     params,
   }: FetchEventParticipantsRequest): Promise<FetchEventParticipantsResponse> {
     const event = await this.eventsRepository.findById(eventId)
-    if (!event) return left(new ResourceNotFoundError())
+
+    if (!event) {
+      return left(new ResourceNotFoundError())
+    }
 
     const registrations = await this.registrationsRepository.findManyByEventId(
       eventId,
@@ -44,13 +55,27 @@ export class FetchEventParticipantsUseCase {
         const participant = await this.participantsRepository.findById(
           reg.participantId.toString(),
         )
-        return participant!
+
+        if (!participant) return null
+
+        const attachment = participant.avatarId
+          ? await this.attachmentsRepository.findById(
+              participant.avatarId.toString(),
+            )
+          : null
+
+        return {
+          participant,
+          attachment,
+        }
       }),
     )
 
     return right({
       event,
-      participants,
+      participants: participants.filter(
+        (item): item is ParticipantWithAttachment => item !== null,
+      ),
     })
   }
 }

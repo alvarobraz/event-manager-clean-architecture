@@ -51,6 +51,7 @@ const fetchEventParticipantsUseCase = new FetchEventParticipantsUseCase(
   eventsRepository,
   registrationsRepository,
   participantsRepository,
+  attachmentsRepository,
 )
 const fetchEventParticipantsController = new FetchEventParticipantsController(
   fetchEventParticipantsUseCase,

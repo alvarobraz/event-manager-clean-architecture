@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { InMemoryEventsRepository } from 'test/repositories/in-memory-events-repository'
 import { InMemoryParticipantsRepository } from 'test/repositories/in-memory-participants-repository'
 import { InMemoryRegistrationsRepository } from 'test/repositories/in-memory-registrations-repository'
+import { InMemoryAttachmentsRepository } from 'test/repositories/in-memory-attachments-repository'
 import { FetchEventParticipantsUseCase } from './fetch-event-participants.use-case'
 import { Event } from '@/domain/entities/event'
 import { Participant } from '@/domain/entities/participant'
@@ -12,6 +13,7 @@ import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 let eventsRepo: InMemoryEventsRepository
 let participantsRepo: InMemoryParticipantsRepository
 let registrationsRepo: InMemoryRegistrationsRepository
+let attachmentsRepo: InMemoryAttachmentsRepository
 let sut: FetchEventParticipantsUseCase
 
 describe('Fetch Event Participants Use Case', () => {
@@ -19,10 +21,13 @@ describe('Fetch Event Participants Use Case', () => {
     eventsRepo = new InMemoryEventsRepository()
     participantsRepo = new InMemoryParticipantsRepository()
     registrationsRepo = new InMemoryRegistrationsRepository()
+    attachmentsRepo = new InMemoryAttachmentsRepository()
+
     sut = new FetchEventParticipantsUseCase(
       eventsRepo,
       registrationsRepo,
       participantsRepo,
+      attachmentsRepo, // 👈 NOVO
     )
   })
 
@@ -40,12 +45,14 @@ describe('Fetch Event Participants Use Case', () => {
       phone: '41999999991',
       createdAt: new Date(),
     })
+
     const participant2 = Participant.create({
       name: 'John Doe',
       email: Email.create('john@example.com'),
       phone: '41999999992',
       createdAt: new Date(),
     })
+
     await participantsRepo.create(participant1)
     await participantsRepo.create(participant2)
 
@@ -55,6 +62,7 @@ describe('Fetch Event Participants Use Case', () => {
         participantId: participant1.id,
       }),
     )
+
     await registrationsRepo.create(
       Registration.create({
         eventId: event.id,
@@ -68,13 +76,19 @@ describe('Fetch Event Participants Use Case', () => {
     })
 
     expect(result.isRight()).toBe(true)
+
     if (result.isRight()) {
       expect(result.value.event.name).toBe('Node.js Conference')
       expect(result.value.participants).toHaveLength(2)
+
       expect(result.value.participants).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({ name: 'Álvaro Braz' }),
-          expect.objectContaining({ name: 'John Doe' }),
+          expect.objectContaining({
+            participant: expect.objectContaining({ name: 'Álvaro Braz' }),
+          }),
+          expect.objectContaining({
+            participant: expect.objectContaining({ name: 'John Doe' }),
+          }),
         ]),
       )
     }
@@ -95,6 +109,7 @@ describe('Fetch Event Participants Use Case', () => {
         phone: `4199999999${i}`,
         createdAt: new Date(),
       })
+
       await participantsRepo.create(participant)
 
       await registrationsRepo.create(
@@ -105,17 +120,22 @@ describe('Fetch Event Participants Use Case', () => {
       )
     }
 
-    // Página 1 com 2 itens
     const result = await sut.execute({
       eventId: event.id.toString(),
       params: { page: 1, pageSize: 2 },
     })
 
     expect(result.isRight()).toBe(true)
+
     if (result.isRight()) {
       expect(result.value.participants).toHaveLength(2)
-      expect(result.value.participants[0].name).toBe('Participant 1')
-      expect(result.value.participants[1].name).toBe('Participant 2')
+
+      expect(result.value.participants[0].participant.name).toBe(
+        'Participant 1',
+      )
+      expect(result.value.participants[1].participant.name).toBe(
+        'Participant 2',
+      )
     }
 
     const resultSecondPage = await sut.execute({
@@ -125,7 +145,10 @@ describe('Fetch Event Participants Use Case', () => {
 
     if (resultSecondPage.isRight()) {
       expect(resultSecondPage.value.participants).toHaveLength(1)
-      expect(resultSecondPage.value.participants[0].name).toBe('Participant 3')
+
+      expect(resultSecondPage.value.participants[0].participant.name).toBe(
+        'Participant 3',
+      )
     }
   })
 
@@ -145,6 +168,7 @@ describe('Fetch Event Participants Use Case', () => {
       description: 'No one here',
       date: new Date(Date.now() + 1000 * 60 * 60 * 24),
     })
+
     await eventsRepo.create(event)
 
     const result = await sut.execute({
@@ -153,6 +177,7 @@ describe('Fetch Event Participants Use Case', () => {
     })
 
     expect(result.isRight()).toBe(true)
+
     if (result.isRight()) {
       expect(result.value.participants).toHaveLength(0)
     }

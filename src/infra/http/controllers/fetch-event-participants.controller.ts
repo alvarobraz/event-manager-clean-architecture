@@ -47,7 +47,9 @@ export class FetchEventParticipantsController {
 
     return res.status(200).json({
       event: EventPresenter.toHTTP(event),
-      participants: participants.map(ParticipantPresenter.toHTTP),
+      participants: participants.map((item) =>
+        ParticipantPresenter.toHTTP(item),
+      ),
     })
   }
 }

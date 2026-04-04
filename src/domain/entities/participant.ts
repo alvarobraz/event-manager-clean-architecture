@@ -6,6 +6,7 @@ export interface ParticipantProps {
   name: string
   email: Email
   phone: string
+  avatarId?: UniqueEntityID | null
   createdAt: Date
 }
 
@@ -19,6 +20,10 @@ export class Participant extends Entity<ParticipantProps> {
 
   get phone() {
     return this.props.phone
+  }
+
+  get avatarId() {
+    return this.props.avatarId
   }
 
   get createdAt() {
@@ -46,6 +51,7 @@ export class Participant extends Entity<ParticipantProps> {
     return new Participant(
       {
         ...props,
+        avatarId: props.avatarId ?? null,
         createdAt: props.createdAt ?? new Date(),
       },
       id,
