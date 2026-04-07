@@ -4,6 +4,12 @@ export class EventPresenter {
   static toHTTP(event: Event, attachment?: { url: string } | null) {
     const baseUrl = process.env.CLOUDFLARE_PUBLIC_URL
 
+    if (!baseUrl && attachment) {
+      console.warn(
+        `[WARN] CLOUDFLARE_PUBLIC_URL is not defined in environment variables!`,
+      )
+    }
+
     return {
       id: event.id.toString(),
       name: event.name,
@@ -13,7 +19,7 @@ export class EventPresenter {
 
       bannerImage: attachment
         ? {
-            url: `${baseUrl}/${attachment.url}`,
+            url: baseUrl ? `${baseUrl}/${attachment.url}` : attachment.url,
           }
         : null,
     }
